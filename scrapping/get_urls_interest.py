@@ -13,7 +13,7 @@ def get_urls(categories : list[str]):
             'action': 'query',
             'list': 'categorymembers',
             'cmtitle': category,
-            'cmlimit': 500,  # Number of articles to retrieve per category
+            'cmlimit': 5,#00,  # Number of articles to retrieve per category
             'format': 'json'
         }
 
