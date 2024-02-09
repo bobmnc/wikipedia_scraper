@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from transformers import AutoTokenizer
 import logging
+import torch
 
 def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
     '''
@@ -39,9 +40,13 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
             # Exclude bold text
             for tag in paragraph.find_all('b'):
                 tag.replace_with(tag.text)
-            print(paragraph)
+
             article_text += paragraph.text + '\n'
-            tokenized_text += tokenizer(paragraph.text.strip().lower()) ## supposed to work on a batch of text
+            tokenized_text.append(tokenizer.encode(paragraph.text.strip().lower(),
+                                  max_length =1000,
+                                  padding='max_length',
+                                  truncation=True))
+        tokenized_text = torch.tensor(tokenized_text)
         return article_text,tokenized_text
     else:
         # If the request was not successful, print an error message
