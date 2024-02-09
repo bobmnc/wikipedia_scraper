@@ -5,7 +5,7 @@ from transformers import AutoModel
 from tqdm import tqdm
 
 
-def embed_dataset(data_dir : str,embedding_model : str = 'distilbert_base_uncased'):
+def embed_dataset(data_dir : str,embedding_model : str = 'distilbert-base-uncased'):
     categories = os.listdir(data_dir)
     model = AutoModel.from_pretrained(embedding_model)
     list_embeds = []
