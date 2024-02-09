@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 from transformers import AutoTokenizer
 import logging
 import torch
+from nltk import sent_tokenize
+# import nltk
+# nltk.download('punkt')
 
 def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
     '''
@@ -42,10 +45,11 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
                 tag.replace_with(tag.text)
 
             article_text += paragraph.text + '\n'
-            tokenized_text.append(tokenizer.encode(paragraph.text.strip().lower(),
-                                  max_length =1000,
-                                  padding='max_length',
-                                  truncation=True))
+            for sentence in sent_tokenize(paragraph.text.strip()):
+                tokenized_text.append(tokenizer.encode(sentence.strip().lower(),
+                                    max_length = 512,
+                                    padding='max_length',
+                                    truncation=True))
         tokenized_text = torch.tensor(tokenized_text)
         return article_text,tokenized_text
     else:
