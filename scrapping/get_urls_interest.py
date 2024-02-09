@@ -3,6 +3,7 @@ import requests
 
 def get_urls(categories : list[str]):
     all_article_urls = []
+    categories_urls = []
 
     # Iterate over each category
     for category in categories:
@@ -28,8 +29,9 @@ def get_urls(categories : list[str]):
         article_urls = [base_url + title.replace(' ', '_') for title in article_titles]
 
         all_article_urls.extend(article_urls)
+        categories_urls.extend(category)
 
-        return all_article_urls
+    return all_article_urls,categories_urls
 
 if __name__=='__main__':
     urls = get_urls(['Category:Machine learning'])
