@@ -51,7 +51,7 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
     else:
         # If the request was not successful, print an error message
         logging.warning('Error: Unable to retrieve the Wikipedia article.')
-        return None
+        return None,None
 
 # Example usage:
 if __name__ == "__main__":
