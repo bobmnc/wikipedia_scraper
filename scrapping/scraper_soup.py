@@ -50,6 +50,9 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
                                     max_length = 512,
                                     padding='max_length',
                                     truncation=True))
+
+                #### TO DO create attention mask to handle
+                ## padding
         tokenized_text = torch.tensor(tokenized_text)
         return article_text,tokenized_text
     else:
