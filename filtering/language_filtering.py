@@ -28,20 +28,20 @@ def filter_language(text : list[str],list_languages : list[str],
     model = AutoModelForSequenceClassification.from_pretrained(model_ckpt)
 
     inputs = tokenizer(text, padding=True, truncation=True, return_tensors="pt")
-    if len(input.shape)<=1:
-        input = input.view(1,-1)
+
+    if len(inputs.input_ids.shape)<=1:
+        inputs.input_ids = inputs.input_ids.view(1,-1)
     with torch.no_grad():
         logits = model(**inputs).logits
 
     preds = torch.softmax(logits, dim=-1)
 
     id2lang = model.config.id2label
-    print(id2lang)
     filtered_preds = preds > limit_prob
 
     # Step 2: Get the indices of values greater than limit_prob
     idxs = torch.nonzero(filtered_preds, as_tuple=True)
-
+    idx_filtered = []
     for i in idxs:
         if id2lang[i.item()] in list_languages:
             idx_filtered.append(i.item())
@@ -49,4 +49,4 @@ def filter_language(text : list[str],list_languages : list[str],
     idx_filtered = torch.tensor(idx_filtered)
     return idx_filtered
 
-print(filter_language('test',['french']))
+print(filter_language('je mange du chocolat',['fr']))
