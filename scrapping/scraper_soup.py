@@ -3,7 +3,17 @@ from bs4 import BeautifulSoup
 from transformers import AutoTokenizer
 import logging
 
-def scrape_wikipedia_article(url,tokenizer):
+def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
+    '''
+    Scrape a wikipedia article based on url
+
+    inputs :
+        - url : (str) an url to a wikipedia article
+        - tokenizer (AutoTokenizer) : huggingface tokenizer to tokenize text
+    Outputs :
+        - article_text (str) the text with line skip between paragraphs
+        - tokenized_text (list[tensors]) tokenized text paragraph by paragraph
+    '''
     # Send a GET request to the Wikipedia URL
     response = requests.get(url)
 
@@ -45,7 +55,6 @@ if __name__ == "__main__":
     tokenizer = AutoTokenizer.from_pretrained('distilbert-base-uncased')
     # Call the scrape_wikipedia_article function
     article_content,tokenized_text = scrape_wikipedia_article(wikipedia_url,tokenizer)
-
-    # Print the extracted text
+    
     if article_content:
         print(article_content)
