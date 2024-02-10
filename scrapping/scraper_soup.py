@@ -31,7 +31,7 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
         paragraphs = content.find_all('p')
         article_text = ''
         tokenized_text = []
-
+        attention_masks = []
         for paragraph in paragraphs:
             # Exclude refs
             for tag in paragraph.find_all('a'):
@@ -49,12 +49,18 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
                 tokenized_text.append(tokenizer.encode(sentence.strip().lower(),
                                     max_length = 512,
                                     padding='max_length',
-                                    truncation=True))
+                                    truncation=True,
+                                    return_tensors='pt'))
+                attention_masks.append(torch.where(tokenized_text[-1]!=0,
+                                                   torch.ones_like(tokenized_text[-1]),
+                                                   torch.zeros_like(tokenized_text[-1])))
+            
 
                 #### TO DO create attention mask to handle
                 ## padding
-        tokenized_text = torch.tensor(tokenized_text)
-        return article_text,tokenized_text
+        tokenized_text = torch.stack(tokenized_text)
+        attention_masks = torch.stack(attention_masks)
+        return article_text,tokenized_text,attention_masks
     else:
         # If the request was not successful, print an error message
         logging.warning('Error: Unable to retrieve the Wikipedia article.')
@@ -66,7 +72,7 @@ if __name__ == "__main__":
     wikipedia_url = 'https://en.wikipedia.org/wiki/Natural_language_processing'
     tokenizer = AutoTokenizer.from_pretrained('distilbert-base-uncased')
     # Call the scrape_wikipedia_article function
-    article_content,tokenized_text = scrape_wikipedia_article(wikipedia_url,tokenizer)
+    article_content,tokenized_text,attention_masks = scrape_wikipedia_article(wikipedia_url,tokenizer)
     
     if article_content:
         print(article_content)
