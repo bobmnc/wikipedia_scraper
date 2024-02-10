@@ -16,7 +16,8 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
         - tokenizer (AutoTokenizer) : huggingface tokenizer to tokenize text
     Outputs :
         - article_text (str) the text with line skip between paragraphs
-        - tokenized_text (list[tensors]) tokenized text paragraph by paragraph
+        - tokenized_text (tensor) tokenized text sentence by sentence
+        - attention_masks (tensor) attentions mask that takes into account padding
     '''
     # Send a GET request to the Wikipedia URL
     response = requests.get(url)
