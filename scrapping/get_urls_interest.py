@@ -27,9 +27,9 @@ def get_urls(categories : list[str]):
         # Construct URLs from the article titles
         base_url = 'https://en.wikipedia.org/wiki/'
         article_urls = [base_url + title.replace(' ', '_') for title in article_titles]
-
+        category_list = [category for title in article_titles]
         all_article_urls.extend(article_urls)
-        categories_urls.extend(category)
+        categories_urls.extend(category_list)
 
     return all_article_urls,categories_urls
 
