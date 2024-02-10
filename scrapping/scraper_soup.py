@@ -31,6 +31,7 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
         content = soup.find(id='mw-content-text')
         paragraphs = content.find_all('p')
         article_text = ''
+        sentences = []
         tokenized_text = []
         attention_masks = []
         for paragraph in paragraphs:
@@ -46,21 +47,21 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
                 tag.replace_with(tag.text)
 
             article_text += paragraph.text + '\n'
-            for sentence in sent_tokenize(paragraph.text.strip()):
-                tokenized_text.append(tokenizer.encode(sentence.strip().lower(),
-                                    max_length = 512,
-                                    padding='max_length',
-                                    truncation=True,
-                                    return_tensors='pt'))
-                attention_masks.append(torch.where(tokenized_text[-1]!=0,
-                                                   torch.ones_like(tokenized_text[-1]),
-                                                   torch.zeros_like(tokenized_text[-1])))
-            
 
-                #### TO DO create attention mask to handle
-                ## padding
-        tokenized_text = torch.concatenate(tokenized_text)
-        attention_masks = torch.concatenate(attention_masks)
+            sentences.extend(sent_tokenize(paragraph.text.strip()))
+        batch_size = 8  
+        for i in range(0, len(sentences), batch_size):
+            batch_sentences = sentences[i:min(i + batch_size,
+                                              len(sentences))]
+            encoded_sentences = tokenizer(batch_sentences,
+                                          padding='max_length', 
+                                          truncation=True, 
+                                          return_tensors='pt')
+            tokenized_text.extend(encoded_sentences['input_ids'])
+            attention_masks.extend(encoded_sentences['attention_mask'])
+
+        tokenized_text = torch.stack(tokenized_text)
+        attention_masks = torch.stack(attention_masks)
         return article_text,tokenized_text,attention_masks
     else:
         # If the request was not successful, print an error message
