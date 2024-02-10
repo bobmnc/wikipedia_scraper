@@ -59,8 +59,8 @@ def scrape_wikipedia_article(url : str,tokenizer : AutoTokenizer):
 
                 #### TO DO create attention mask to handle
                 ## padding
-        tokenized_text = torch.stack(tokenized_text)
-        attention_masks = torch.stack(attention_masks)
+        tokenized_text = torch.concatenate(tokenized_text)
+        attention_masks = torch.concatenate(attention_masks)
         return article_text,tokenized_text,attention_masks
     else:
         # If the request was not successful, print an error message
