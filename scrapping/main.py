@@ -30,15 +30,22 @@ def main():
                                      chunks=True)
         
         for i, idx in enumerate(indices):
-            text,tokenized_text = scrape_wikipedia_article(url=list_urls[idx],
+            text,tokenized_text,attention_masks = scrape_wikipedia_article(url=list_urls[idx],
                                                        tokenizer=tokenizer)
-            torch.save(tokenized_text,join(tokenized_dir,category,str(i))+'.pt')
+            data_dict = {
+                    'tokenized_text': tokenized_text,
+                    'attention_masks': attention_masks
+                }
+            torch.save(data_dict,join(tokenized_dir,category,str(i))+'.pt')
 
             if text is not None:
                 dset[i] = text
             else:
                 # Handle case where fetching data fails
                 dset[i] = 'Request failed'
+
+
+
 if __name__=='__main__':
     main()
             
