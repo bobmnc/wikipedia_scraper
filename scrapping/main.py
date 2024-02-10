@@ -13,7 +13,7 @@ def main():
     tokenized_dir = '../data/tokenized_data'
     list_urls,categories_urls = get_urls(categories=categories)
     f = h5py.File('../data/text_data/text_dataset.h5', 'w')
-    previous_category = categories_urls[0]
+    
     
     for category in categories:
         # Create a group for each category
@@ -22,10 +22,12 @@ def main():
         group = f.create_group(category)
         
         # Get the indices of URLs corresponding to the current category
-        indices = [i for i, cat in enumerate(categories) if cat == category]
+        indices = [i for i, cat in enumerate(categories_urls) if cat == category]
         
         # Create a chunked dataset for outputs
-        dset = group.create_dataset('text', shape=(len(indices),), dtype=h5py.special_dtype(vlen=str), chunks=True)
+        dset = group.create_dataset('text', shape=(len(indices),),
+                                     dtype=h5py.special_dtype(vlen=str),
+                                     chunks=True)
         
         for i, idx in enumerate(indices):
             text,tokenized_text = scrape_wikipedia_article(url=list_urls[idx],
